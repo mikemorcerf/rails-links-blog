@@ -36,7 +36,21 @@ module RailsLinksBlog
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Don't generate system test files.
-    config.generators.system_tests = nil
+    config.generators do |g|
+      # Don't generate system test files.
+      g.system_tests = nil
+
+      g.factory_bot suffix: "factory"
+    end
+
+    g.test_framework :rspec,
+                      fixtures: true,
+                      view_specs: false,
+                      helper_specs: false,
+                      routing_specs: false,
+                      controller_specs: false,
+                      request_specs: true
+
+    g.fixture_replacement :factory_bot, dir: 'spec/factories'
   end
 end
