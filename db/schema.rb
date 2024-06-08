@@ -23,7 +23,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_08_024540) do
   end
 
   create_table "links", force: :cascade do |t|
-    t.string "url", null: false
+    t.string "url"
     t.string "icon"
     t.integer "order", null: false
     t.boolean "display", default: false, null: false
