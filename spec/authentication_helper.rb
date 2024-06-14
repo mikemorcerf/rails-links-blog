@@ -1,15 +1,13 @@
 module AuthenticationHelper
   def self.included(base)
     base.around(:each, :authenticated) do |example|
-      user_email = Faker::Internet.email
-      ENV['ADMIN_EMAIL'] = user_email
-      @user = create(:user, email: user_email)
+      @user = User.first || create(:user)
       sign_in @user
 
       example.run
 
       sign_out @user
-      ENV['ADMIN_EMAIL'] = nil
+      @user.destroy
     end
   end
 end

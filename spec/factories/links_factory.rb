@@ -6,7 +6,9 @@ FactoryBot.define do
     display { true }
     sequence(:order) { |n| n }
 
-    association :user
+    after(:build) do |link|
+      link.user = User.first || create(:user)
+    end
 
     trait :invisible do
       display { false }

@@ -6,6 +6,15 @@ class User < ApplicationRecord
 
   validates :first_name, :last_name, presence: true
 
-  has_many :links
-  has_many :posts
+  before_save :is_admin_email?
+
+  has_many :links, dependent: :destroy
+  has_many :posts, dependent: :destroy
+
+  private
+
+  def is_admin_email?
+    throw "Yu Ain't No Chosen One" if email != ENV.fetch('ADMIN_EMAIL')
+    true
+  end
 end

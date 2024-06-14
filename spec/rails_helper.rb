@@ -1,7 +1,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 require 'authentication_helper'
+require 'securerandom'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['ADMIN_EMAIL'] = "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?

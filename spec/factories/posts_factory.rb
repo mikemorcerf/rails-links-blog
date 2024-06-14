@@ -3,6 +3,8 @@ FactoryBot.define do
     title { "MyString" }
     video_url { "MyString" }
 
-    association :user
+    after(:build) do |post|
+      post.user = User.first || create(:user)
+    end
   end
 end
