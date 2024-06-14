@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_225458) do
   end
 
   create_table "links", force: :cascade do |t|
+    t.string "title"
     t.string "url"
     t.string "icon"
     t.integer "order", null: false
@@ -75,8 +76,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_225458) do
   create_table "posts", force: :cascade do |t|
     t.string "title", null: false
     t.string "video_url"
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "posts_tags", id: false, force: :cascade do |t|
@@ -118,4 +121,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_225458) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "link_types", "links"
   add_foreign_key "links", "users"
+  add_foreign_key "posts", "users"
 end

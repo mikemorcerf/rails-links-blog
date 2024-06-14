@@ -1,9 +1,15 @@
 FactoryBot.define do
   factory :link do
-    url { "MyString" }
-    icon { "MyString" }
-    order { 1 }
-    display { false }
-    user { nil }
+    title { Faker::Lorem.sentence }
+    url { Faker::Internet.url }
+    icon { Faker::Lorem.word }
+    display { true }
+    sequence(:order) { |n| n }
+
+    association :user
+
+    trait :invisible do
+      display { false }
+    end
   end
 end

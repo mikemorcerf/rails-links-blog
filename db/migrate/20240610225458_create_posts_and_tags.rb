@@ -3,6 +3,7 @@ class CreatePostsAndTags < ActiveRecord::Migration[7.1]
     create_table :posts do |t|
       t.string :title, null: false
       t.string :video_url
+      t.references :user, null: false, foreign_key: true
       t.timestamps
     end
 

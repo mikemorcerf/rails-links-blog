@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :link_type do
-    name { "MyString" }
-    link { nil }
+    name { Faker::Loren.word }
+
+    association :link
   end
 end
