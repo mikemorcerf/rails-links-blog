@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Home', type: :request do
   subject { get '/' }
 
-  describe 'GET /index' do
+  describe 'index' do
     context 'Links' do
       let!(:link3) { create(:link, order: 3) }
       let!(:link1) { create(:link, order: 1) }

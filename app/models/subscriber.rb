@@ -1,4 +1,4 @@
 class Subscriber < ApplicationRecord
-  validades :email, uniquiness: true
-  validades :email, presence: true
+  validates :email, uniqueness: true
+  validates :email, presence: true
 end
