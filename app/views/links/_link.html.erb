@@ -8,5 +8,7 @@
     <p><%= link.url %></p>
     <%= link.order %>
   <% end %>
-  <%= button_to 'Delete', link_path(link), method: :delete %>
+  <% if user_signed_in? %>
+    <%= button_to 'Delete', link_path(link), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <% end %>
 </div>

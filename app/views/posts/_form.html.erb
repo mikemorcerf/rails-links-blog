@@ -1,0 +1,11 @@
+<div>
+  <%= form_with model: post do |form| %>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+    <%= form.label :video_url %>
+    <%= form.url_field :video_url %>
+    <%= form.label :body %>
+    <%= form.rich_text_area :body %>
+    <%= form.submit %>
+  <% end %>
+</div>

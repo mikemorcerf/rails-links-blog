@@ -4,5 +4,17 @@ class Post < ApplicationRecord
 
   has_rich_text :body
 
-  validates :title, presence: true
+  validates :title, :static_page_name, presence: true, uniqueness: true
+
+  before_validation :create_static_page_name
+
+  def to_param
+    static_page_name
+  end
+
+  private
+
+  def create_static_page_name
+    self.static_page_name = title.parameterize
+  end
 end

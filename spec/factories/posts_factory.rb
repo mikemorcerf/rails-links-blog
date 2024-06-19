@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :post do
-    title { Faker::Book.title }
+    title { Faker::Lorem.sentence }
     video_url { Faker::Internet.url }
-    body { "<p>#{Faker::Lorem.sentence}</p>" }
+    body { "<p>#{SecureRandom.alphanumeric(8)}</p>" }
 
     after(:build) do |post|
       post.user = User.first || create(:user)

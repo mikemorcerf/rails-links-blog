@@ -1,0 +1,9 @@
+<div>
+  <%= link_to post_path(post) do %>
+    <h1 class="font-bold text-4xl"><%= post.title %></h1>
+    <p><%= truncate(sanitize(post.body, tags: [])) %></p>
+  <% end %>
+  <% if user_signed_in? %>
+    <%= button_to 'Post', post_path(post), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <% end %>
+</div>

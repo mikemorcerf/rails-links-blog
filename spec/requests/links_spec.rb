@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Links', type: :request do
-  let!(:link3) { create(:link, order: 3) }
-  let!(:link1) { create(:link, order: 1) }
-  let!(:link2_invisible) { create(:link, :invisible, order: 2) }
+  let!(:link1) { create(:link) }
+  let!(:link2_invisible) { create(:link, :invisible) }
+  let!(:link3) { create(:link) }
 
   describe 'index' do
     before { get '/links' }
@@ -15,7 +15,11 @@ RSpec.describe 'Links', type: :request do
 
       it 'displays only visible links in correct order' do
         expect(response.body).not_to include(link2_invisible.title)
-        expect(response.body.index(link1.title)).to be < response.body.index(link3.title)
+        expect(response.body.index(link3.title)).to be < response.body.index(link1.title)
+      end
+
+      it 'does not show Link Delete buttons' do
+        expect(response.body).not_to include('Delete')
       end
     end
 
@@ -25,8 +29,12 @@ RSpec.describe 'Links', type: :request do
       end
 
       it 'displays all links both visible and invisible in correct order' do
-        expect(response.body.index(link1.title)).to be < response.body.index(link2_invisible.title)
-        expect(response.body.index(link2_invisible.title)).to be < response.body.index(link3.title)
+        expect(response.body.index(link2_invisible.title)).to be < response.body.index(link1.title)
+        expect(response.body.index(link3.title)).to be < response.body.index(link2_invisible.title)
+      end
+
+      it 'shows Link Delete buttons' do
+        expect(response.body).to include('Delete')
       end
     end
   end

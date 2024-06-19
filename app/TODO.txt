@@ -1,0 +1,11 @@
+Containerize!!!!!!!!!
+Add association tests in Models?
+Images for Links and User profile (polimorphic)
+Send posts as email (Keep track of whether a post was emailed?)
+Add tags to Posts
+Add pagination to Posts
+Does Post body get deleted at Post.destroy ?
+Add comments to Posts (polimorphic?)
+Add Rubocop for fun?
+Validation to email format for email subscription
+Add test coverage for fun? (aim for 95-100% coverage)

@@ -8,13 +8,12 @@ class Link < ApplicationRecord
   default_scope { order(order: :asc) }
   scope :visible, -> { where(display: true) }
 
-  before_create :reorder_links_after_create
-  before_destroy :reorder_links_after_destroy
+  before_create :reorder_links_before_create
+  before_destroy :reorder_links_before_destroy
 
   private
 
-  def reorder_links_after_create
-    order = 1
+  def reorder_links_before_create
     ActiveRecord::Base.transaction do
       Link.all.each do |link|
         link.increment!(:order)
@@ -22,7 +21,7 @@ class Link < ApplicationRecord
     end
   end
 
-  def reorder_links_after_destroy
+  def reorder_links_before_destroy
     ActiveRecord::Base.transaction do
       Link.where(order: (self.order+1)..).each do |link|
         link.decrement!(:order)

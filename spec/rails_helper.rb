@@ -1,14 +1,17 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-require 'authentication_helper'
+require 'post_files_cleaner_helper'
 require 'securerandom'
 ENV['RAILS_ENV'] ||= 'test'
-ENV['ADMIN_EMAIL'] = "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |file| require file }
+
+ENV['ADMIN_EMAIL'] = "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
+require 'authentication_helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
