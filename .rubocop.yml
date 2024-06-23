@@ -1,0 +1,13 @@
+require:
+  - rubocop-factory_bot
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+
+AllCops:
+  TargetRubyVersion: 3.3 # or the latest supported version
+  Exclude:
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'node_modules/**/*'

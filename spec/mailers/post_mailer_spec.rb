@@ -1,4 +1,6 @@
-require "rails_helper"
+# frozen_string_literal: true
+
+require 'rails_helper'
 
 RSpec.describe PostMailer, type: :mailer do
   describe 'new_post' do
@@ -11,8 +13,8 @@ RSpec.describe PostMailer, type: :mailer do
         subscriber.mailing_lists << mailing_list
       end
 
-      it 'should generate both html and txt templates' do
-        email = PostMailer.with(post: post, subscriber: subscriber).new_post
+      it 'generates both html and txt templates' do
+        email = described_class.with(post:, subscriber:).new_post
 
         assert_emails 1 do
           email.deliver_now

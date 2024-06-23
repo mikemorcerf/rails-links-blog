@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PostFilesCleanerHelper
   def self.included(base)
     base.around(:each, :create_and_clean_post_files) do |example|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 
 require 'rails'
@@ -26,7 +28,7 @@ module RailsLinksBlog
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -49,13 +51,13 @@ module RailsLinksBlog
       g.factory_bot suffix: 'factory'
 
       g.test_framework :rspec,
-                        fixtures: true,
-                        view_specs: false,
-                        helper_specs: false,
-                        routing_specs: false,
-                        controller_specs: false,
-                        request_specs: true
-  
+                       fixtures: true,
+                       view_specs: false,
+                       helper_specs: false,
+                       routing_specs: false,
+                       controller_specs: false,
+                       request_specs: true
+
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
     end
   end

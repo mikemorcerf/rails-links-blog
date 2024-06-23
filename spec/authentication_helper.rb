@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AuthenticationHelper
   def self.included(base)
     base.around(:each, :authenticated) do |example|
@@ -15,9 +17,11 @@ module AuthenticationHelper
   end
 
   def set_admin_email_env
-    ENV['ADMIN_EMAIL'] ||= User.first.present? ?
-      User.first.email :
-      "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
+    ENV['ADMIN_EMAIL'] ||= if User.first.present?
+                             User.first.email
+                           else
+                             "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
+                           end
   end
 end
 

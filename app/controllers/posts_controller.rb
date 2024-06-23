@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class PostsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_post, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, except: %i[index show]
+  before_action :set_post, only: %i[edit update destroy]
 
   def index
     @posts = Post.all
@@ -8,7 +10,7 @@ class PostsController < ApplicationController
 
   def show
     if StaticPageService.static_page_exist?(params[:static_page_name])
-      render "/posts/static_pages/#{params[:static_page_name]}" 
+      render "/posts/static_pages/#{params[:static_page_name]}"
     else
       redirect_to posts_url
     end
@@ -24,7 +26,7 @@ class PostsController < ApplicationController
 
       if post.deliver_newsletter
         MailingList.post_newsletter_subscribers.find_each do |subscriber|
-          PostMailer.with(post: post, subscriber: subscriber).new_post.deliver_later
+          PostMailer.with(post:, subscriber:).new_post.deliver_later
         end
       end
 
@@ -57,7 +59,7 @@ class PostsController < ApplicationController
   private
 
   def set_post
-    @post ||= Post.find_by_static_page_name(params[:static_page_name])
+    @post ||= Post.find_by(static_page_name: params[:static_page_name])
   end
 
   def post_params

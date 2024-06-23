@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StaticPageService
   def self.generate_static_page_from_post(post)
     file_path = get_file_path(post.static_page_name)
@@ -15,8 +17,6 @@ class StaticPageService
   def self.static_page_exist?(static_page_name)
     File.exist?(get_file_path(static_page_name))
   end
-
-  private
 
   def self.get_file_path(static_page_name)
     Rails.root.join("app/views/posts/static_pages/#{static_page_name}.html.erb")

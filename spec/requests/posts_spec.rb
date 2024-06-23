@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'Posts', type: :request do
@@ -66,6 +68,8 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'create' do
+    subject { post '/posts', params: }
+
     let(:params) do
       {
         post: {
@@ -76,8 +80,6 @@ RSpec.describe 'Posts', type: :request do
         }
       }
     end
-
-    subject { post '/posts', params: params }
 
     context 'non-logged-in user' do
       it 'redirects to signin page' do
@@ -119,7 +121,7 @@ RSpec.describe 'Posts', type: :request do
           subscriber2.mailing_lists << mailing_list
         end
 
-        it 'should send newsletter to all post_newsletter subscribers' do
+        it 'sends newsletter to all post_newsletter subscribers' do
           assert_emails 2 do
             subject
             perform_enqueued_jobs
@@ -130,7 +132,7 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'edit' do
-    let!(:posts) { [ create(:post) ] }
+    let!(:posts) { [create(:post)] }
 
     before { get "/posts/#{posts[0].static_page_name}/edit" }
 
@@ -148,7 +150,9 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'update' do
-    let!(:posts) { [ create(:post) ] }
+    subject { put "/posts/#{posts[0].static_page_name}", params: }
+
+    let!(:posts) { [create(:post)] }
     let(:params) do
       {
         post: {
@@ -158,8 +162,6 @@ RSpec.describe 'Posts', type: :request do
         }
       }
     end
-
-    subject { put "/posts/#{posts[0].static_page_name}", params: params }
 
     context 'non-logged-in user' do
       it 'redirects to signin page' do
@@ -201,9 +203,9 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'destroy' do
-    let!(:posts) { [ create(:post) ] }
-
     subject { delete "/posts/#{posts[0].static_page_name}" }
+
+    let!(:posts) { [create(:post)] }
 
     context 'non-logged-in user' do
       it 'redirects to signin page' do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Link < ApplicationRecord
   belongs_to :user
   has_one :link_type
@@ -15,7 +17,7 @@ class Link < ApplicationRecord
 
   def reorder_links_before_create
     ActiveRecord::Base.transaction do
-      Link.all.each do |link|
+      Link.all.find_each do |link|
         link.increment!(:order)
       end
     end
@@ -23,7 +25,7 @@ class Link < ApplicationRecord
 
   def reorder_links_before_destroy
     ActiveRecord::Base.transaction do
-      Link.where(order: (self.order+1)..).each do |link|
+      Link.where(order: (order + 1)..).each do |link|
         link.decrement!(:order)
       end
     end

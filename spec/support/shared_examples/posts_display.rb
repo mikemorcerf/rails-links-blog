@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'displays all posts' do
   it 'includes post titles' do
     posts.each do |post|

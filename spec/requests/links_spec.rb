@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'Links', type: :request do
@@ -76,6 +78,8 @@ RSpec.describe 'Links', type: :request do
   end
 
   describe 'create' do
+    subject { post '/links', params: }
+
     let(:params) do
       {
         link: {
@@ -85,8 +89,6 @@ RSpec.describe 'Links', type: :request do
         }
       }
     end
-
-    subject { post '/links', params: params }
 
     context 'non-logged-in user' do
       it 'redirects to signin page' do
@@ -141,7 +143,7 @@ RSpec.describe 'Links', type: :request do
       }
     end
 
-    before { put "/links/#{link1.id}", params: params }
+    before { put "/links/#{link1.id}", params: }
 
     context 'non-logged-in user' do
       it 'redirects to signin page' do

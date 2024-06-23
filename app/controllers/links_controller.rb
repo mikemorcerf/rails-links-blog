@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class LinksController < ApplicationController
   before_action :authenticate_user!, except: [:index]
-  before_action :set_link, only: [:show, :edit, :update, :destroy]
+  before_action :set_link, only: %i[show edit update destroy]
 
   def index
     @links = user_signed_in? ? Link.all : Link.visible
