@@ -10,7 +10,6 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |file| require file }
 
-ENV['ADMIN_EMAIL'] = "#{SecureRandom.alphanumeric(10)}@#{SecureRandom.alphanumeric(5)}.com".downcase
 require 'authentication_helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

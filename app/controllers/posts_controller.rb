@@ -21,6 +21,13 @@ class PostsController < ApplicationController
 
     if post.save
       StaticPageService.generate_static_page_from_post(post)
+
+      if post.deliver_newsletter
+        MailingList.post_newsletter_subscribers.find_each do |subscriber|
+          PostMailer.with(post: post, subscriber: subscriber).new_post.deliver_later
+        end
+      end
+
       redirect_to post_url(post)
     else
       render :new
@@ -57,7 +64,8 @@ class PostsController < ApplicationController
     params.require(:post).permit(
       :title,
       :body,
-      :video_url
+      :video_url,
+      :deliver_newsletter
     )
   end
 end

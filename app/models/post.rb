@@ -5,6 +5,7 @@ class Post < ApplicationRecord
   has_rich_text :body
 
   validates :title, :static_page_name, presence: true, uniqueness: true
+  validates :deliver_newsletter, inclusion: { in: [true, false] }
 
   before_validation :create_static_page_name
 

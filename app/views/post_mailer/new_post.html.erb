@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <%= link_to post_url(@post) do %>
+      <h1><%= @post.title %></h1>
+    <% end %>
+    <div><%= @post.video_url %></div>
+    <p>
+      <%= @post.body %>
+    </p>
+    <p>Post by <%= "#{@post_author.first_name} #{@post_author.last_name}" %></p>
+  </body>
+</html>

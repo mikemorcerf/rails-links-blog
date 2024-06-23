@@ -71,7 +71,8 @@ RSpec.describe 'Posts', type: :request do
         post: {
           title: Faker::Lorem.sentence,
           body: "<p>#{SecureRandom.alphanumeric(8)}</p>",
-          video_url: Faker::Internet.url
+          video_url: Faker::Internet.url,
+          deliver_newsletter: false
         }
       }
     end
@@ -103,6 +104,27 @@ RSpec.describe 'Posts', type: :request do
           params[:post][:video_url],
           params[:post][:body]
         )
+      end
+
+      context 'when post deliver_newsletter is true' do
+        let!(:mailing_list) { create(:mailing_list, :post_newsletter) }
+
+        let!(:subscriber1) { create(:subscriber) }
+        let!(:subscriber2) { create(:subscriber) }
+        let!(:non_subscriber) { create(:subscriber) }
+
+        before do
+          params[:post][:deliver_newsletter] = true
+          subscriber1.mailing_lists << mailing_list
+          subscriber2.mailing_lists << mailing_list
+        end
+
+        it 'should send newsletter to all post_newsletter subscribers' do
+          assert_emails 2 do
+            subject
+            perform_enqueued_jobs
+          end
+        end
       end
     end
   end

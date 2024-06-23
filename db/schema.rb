@@ -72,10 +72,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_225458) do
     t.index ["user_id"], name: "index_links_on_user_id"
   end
 
+  create_table "mailing_lists", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_mailing_lists_on_name", unique: true
+  end
+
+  create_table "mailing_lists_subscribers", id: false, force: :cascade do |t|
+    t.bigint "subscriber_id"
+    t.bigint "mailing_list_id"
+    t.index ["mailing_list_id"], name: "index_mailing_lists_subscribers_on_mailing_list_id"
+    t.index ["subscriber_id"], name: "index_mailing_lists_subscribers_on_subscriber_id"
+  end
+
   create_table "posts", force: :cascade do |t|
     t.string "title", null: false
     t.string "static_page_name", null: false
     t.string "video_url"
+    t.boolean "deliver_newsletter", default: false, null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -92,7 +107,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_10_225458) do
 
   create_table "subscribers", force: :cascade do |t|
     t.string "email", null: false
-    t.string "first_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_subscribers_on_email", unique: true

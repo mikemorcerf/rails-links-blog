@@ -37,6 +37,9 @@ module RailsLinksBlog
     # Make Active Record auto-convert to this zone
     config.active_record.default_timezone = :local
 
+    config.action_mailer.default_url_options = { host: ENV['APP_URL'] }
+    config.action_mailer.asset_host = ENV['ASSET_HOST_URL']
+
     # config.eager_load_paths << Rails.root.join('extras')
 
     config.generators do |g|

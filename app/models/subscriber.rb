@@ -1,4 +1,5 @@
 class Subscriber < ApplicationRecord
-  validates :email, uniqueness: true
-  validates :email, presence: true
+  has_and_belongs_to_many :mailing_lists
+
+  validates :email, uniqueness: true, presence: true
 end

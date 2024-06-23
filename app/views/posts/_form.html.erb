@@ -6,6 +6,10 @@
     <%= form.url_field :video_url %>
     <%= form.label :body %>
     <%= form.rich_text_area :body %>
+    <% unless post&.created_at %>
+      <%= form.label :deliver_newsletter, "Deliver in Newsletter" %>
+      <%= form.check_box :deliver_newsletter, { checked: post&.deliver_newsletter.nil? || post.deliver_newsletter } %>
+    <% end %>
     <%= form.submit %>
   <% end %>
 </div>
