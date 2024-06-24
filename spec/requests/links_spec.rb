@@ -3,21 +3,24 @@
 require 'rails_helper'
 
 RSpec.describe 'Links', type: :request do
-  let!(:link1) { create(:link) }
-  let!(:link2_invisible) { create(:link, :invisible) }
-  let!(:link3) { create(:link) }
+  let!(:first_link) { create(:link) }
+  let!(:invisible_link) { create(:link, :invisible) }
+  let!(:third_link) { create(:link) }
 
   describe 'index' do
     before { get '/links' }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
 
-      it 'displays only visible links in correct order' do
-        expect(response.body).not_to include(link2_invisible.title)
-        expect(response.body.index(link3.title)).to be < response.body.index(link1.title)
+      it 'does not display invisible_link' do
+        expect(response.body).not_to include(invisible_link.title)
+      end
+
+      it 'displays third_link before first_link' do
+        expect(response.body.index(third_link.title)).to be < response.body.index(first_link.title)
       end
 
       it 'does not show Link Delete buttons' do
@@ -25,14 +28,17 @@ RSpec.describe 'Links', type: :request do
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
 
-      it 'displays all links both visible and invisible in correct order' do
-        expect(response.body.index(link2_invisible.title)).to be < response.body.index(link1.title)
-        expect(response.body.index(link3.title)).to be < response.body.index(link2_invisible.title)
+      it 'displays invisible_link before first_link' do
+        expect(response.body.index(invisible_link.title)).to be < response.body.index(first_link.title)
+      end
+
+      it 'displays third_link before invisible_link' do
+        expect(response.body.index(third_link.title)).to be < response.body.index(invisible_link.title)
       end
 
       it 'shows Link Delete buttons' do
@@ -42,21 +48,37 @@ RSpec.describe 'Links', type: :request do
   end
 
   describe 'show' do
-    before { get "/links/#{link1.id}" }
+    before { get "/links/#{first_link.id}" }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
 
-      it 'displays links/:id' do
-        expect(response.body).to include(link1.title, link1.url, link1.icon, link1.display.to_s, link1.order.to_s)
+      it 'displays links title' do
+        expect(response.body).to include(first_link.title)
+      end
+
+      it 'displays links url' do
+        expect(response.body).to include(first_link.url)
+      end
+
+      it 'displays link icon' do
+        expect(response.body).to include(first_link.icon)
+      end
+
+      it 'displays link display' do
+        expect(response.body).to include(first_link.display.to_s)
+      end
+
+      it 'displays link order' do
+        expect(response.body).to include(first_link.order.to_s)
       end
     end
   end
@@ -64,13 +86,13 @@ RSpec.describe 'Links', type: :request do
   describe 'new' do
     before { get '/links/new' }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -78,7 +100,7 @@ RSpec.describe 'Links', type: :request do
   end
 
   describe 'create' do
-    subject { post '/links', params: }
+    subject(:link_create) { post '/links', params: }
 
     let(:params) do
       {
@@ -90,42 +112,42 @@ RSpec.describe 'Links', type: :request do
       }
     end
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
-        subject
+        link_create
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'creates new link' do
-        expect { subject }.to change(Link, :count).by(1)
+        expect { link_create }.to change(Link, :count).by(1)
       end
 
       it 'redirects to new link page' do
-        subject
+        link_create
         expect(response).to redirect_to(links_url)
+      end
+
+      it 'displays new link information after redirect' do
+        link_create
         follow_redirect!
 
-        expect(response.body).to include(
-          params[:link][:title],
-          params[:link][:url],
-          params[:link][:icon]
-        )
+        expect(response.body).to include(params[:link][:title], params[:link][:url], params[:link][:icon])
       end
     end
   end
 
   describe 'edit' do
-    before { get "/links/#{link1.id}/edit" }
+    before { get "/links/#{first_link.id}/edit" }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -143,60 +165,67 @@ RSpec.describe 'Links', type: :request do
       }
     end
 
-    before { put "/links/#{link1.id}", params: }
+    before { put "/links/#{first_link.id}", params: }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'redirects to updated link page' do
-        expect(response).to redirect_to(link_url(link1))
-        follow_redirect!
-
-        expect(response.body).to include(
-          params[:link][:title],
-          params[:link][:url],
-          params[:link][:icon]
-        )
+        expect(response).to redirect_to(link_url(first_link))
       end
 
-      it 'updates link' do
-        link1.reload
-        expect(link1.title).to eq(params[:link][:title])
-        expect(link1.url).to eq(params[:link][:url])
-        expect(link1.icon).to eq(params[:link][:icon])
+      it 'displays new link information after redirect' do
+        follow_redirect!
+
+        expect(response.body).to include(params[:link][:title], params[:link][:url], params[:link][:icon])
+      end
+
+      it 'updates link title' do
+        first_link.reload
+        expect(first_link.title).to eq(params[:link][:title])
+      end
+
+      it 'updates link url' do
+        first_link.reload
+        expect(first_link.url).to eq(params[:link][:url])
+      end
+
+      it 'updates link icon' do
+        first_link.reload
+        expect(first_link.icon).to eq(params[:link][:icon])
       end
     end
   end
 
   describe 'destroy' do
-    subject { delete "/links/#{link1.id}" }
+    subject(:link_destroy) { delete "/links/#{first_link.id}" }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
-        subject
+        link_destroy
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'deletes link' do
-        expect { subject }.to change(Link, :count).by(-1)
+        expect { link_destroy }.to change(Link, :count).by(-1)
       end
 
       it 'redirects to links index page' do
-        subject
+        link_destroy
         expect(response).to redirect_to(links_url)
+      end
+
+      it 'index no longer displays link information after redirect' do
+        link_destroy
         follow_redirect!
 
-        expect(response.body).not_to include(
-          link1.title,
-          link1.url,
-          link1.icon
-        )
+        expect(response.body).not_to include(first_link.title, first_link.url, first_link.icon)
       end
     end
   end

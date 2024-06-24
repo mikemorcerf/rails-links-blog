@@ -2,13 +2,14 @@
 
 class LinksController < ApplicationController
   before_action :authenticate_user!, except: [:index]
-  before_action :set_link, only: %i[show edit update destroy]
 
   def index
     @links = user_signed_in? ? Link.all : Link.visible
   end
 
-  def show; end
+  def show
+    @link = Link.find(params[:id])
+  end
 
   def new
     @link = Link.new
@@ -24,9 +25,13 @@ class LinksController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    @link = Link.find(params[:id])
+  end
 
   def update
+    @link = Link.find(params[:id])
+
     if @link.update(link_params)
       redirect_to link_url(@link)
     else
@@ -35,15 +40,12 @@ class LinksController < ApplicationController
   end
 
   def destroy
-    @link.destroy
+    link = Link.find(params[:id])
+    link.destroy
     redirect_to links_url
   end
 
   private
-
-  def set_link
-    @link ||= Link.find(params[:id])
-  end
 
   def link_params
     params.require(:link).permit(

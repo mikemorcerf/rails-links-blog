@@ -2,7 +2,6 @@
 
 class PostsController < ApplicationController
   before_action :authenticate_user!, except: %i[index show]
-  before_action :set_post, only: %i[edit update destroy]
 
   def index
     @posts = Post.all
@@ -36,9 +35,12 @@ class PostsController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    @post = Post.find_by(static_page_name: params[:static_page_name])
+  end
 
   def update
+    @post = Post.find_by(static_page_name: params[:static_page_name])
     old_static_page_name = @post&.static_page_name
 
     if @post&.update(post_params)
@@ -51,16 +53,13 @@ class PostsController < ApplicationController
   end
 
   def destroy
+    @post = Post.find_by(static_page_name: params[:static_page_name])
     StaticPageService.delete_static_page(@post.static_page_name)
     @post.destroy
     redirect_to posts_url
   end
 
   private
-
-  def set_post
-    @post ||= Post.find_by(static_page_name: params[:static_page_name])
-  end
 
   def post_params
     params.require(:post).permit(

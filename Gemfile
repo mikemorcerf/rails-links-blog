@@ -76,8 +76,10 @@ group :development do
 end
 
 group :test do
+  gem 'climate_control'
   gem 'dotenv'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails', '~> 6.1.0'
+  gem 'shoulda-matchers'
 end

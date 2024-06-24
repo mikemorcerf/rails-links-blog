@@ -24,7 +24,6 @@ RSpec.describe StaticPageService, type: :service do
       let!(:post) { create(:post) }
 
       around do |example|
-        expect(described_class.static_page_exist?(post.static_page_name)).to be false
         example.run
         described_class.delete_static_page(post.static_page_name)
       end
@@ -41,7 +40,6 @@ RSpec.describe StaticPageService, type: :service do
 
     before do
       described_class.generate_static_page_from_post(post)
-      expect(described_class.static_page_exist?(post.static_page_name)).to be true
     end
 
     context 'when static page file exists' do

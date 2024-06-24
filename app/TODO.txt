@@ -1,10 +1,9 @@
-Add Rubocop for fun?
+Finish fixing Rubocop offenses
 add form to sign up for newsletter
 Move logic in Post#Create to have a job that iterate through emails and send them
 Containerize!!!!!!!!!
 Check out dip gem - https://github.com/bibendi/dip
 Add Sidekiq
-Add association tests in Models?
 Images for Links and User profile (polimorphic)
 Add tags to Posts
 Add pagination to Posts

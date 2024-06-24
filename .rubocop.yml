@@ -8,6 +8,7 @@ require:
 AllCops:
   TargetRubyVersion: 3.3 # or the latest supported version
   Exclude:
-    - 'db/schema.rb'
     - 'bin/*'
-    - 'node_modules/**/*'
+    - 'config/*/*.rb'
+    - 'db/migrate/*.rb'
+    - 'db/schema.rb'

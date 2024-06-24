@@ -8,7 +8,7 @@ RSpec.describe 'Posts', type: :request do
 
     before { get '/posts' }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -16,7 +16,7 @@ RSpec.describe 'Posts', type: :request do
       include_examples 'displays all posts'
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -30,7 +30,7 @@ RSpec.describe 'Posts', type: :request do
 
     before { get "/posts/#{posts[1].static_page_name}" }
 
-    context 'non-logged-in user', :create_and_clean_post_files do
+    context 'with non-logged-in user', :create_and_clean_post_files do
       it 'renders static page for post' do
         expect(response.body).to include(
           posts[1].title,
@@ -40,7 +40,7 @@ RSpec.describe 'Posts', type: :request do
       end
     end
 
-    context 'logged-in user', :authenticated, :create_and_clean_post_files do
+    context 'with logged-in user', :authenticated, :create_and_clean_post_files do
       it 'renders static page for post' do
         expect(response.body).to include(
           posts[1].title,
@@ -54,13 +54,13 @@ RSpec.describe 'Posts', type: :request do
   describe 'new' do
     before { get '/posts/new' }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -68,7 +68,7 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'create' do
-    subject { post '/posts', params: }
+    subject(:post_create) { post '/posts', params: }
 
     let(:params) do
       {
@@ -81,49 +81,49 @@ RSpec.describe 'Posts', type: :request do
       }
     end
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
-        subject
+        post_create
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated do
+    context 'with logged-in user', :authenticated do
       after { StaticPageService.delete_static_page(params[:post][:title].parameterize) }
 
       it 'creates new post' do
-        expect { subject }.to change(Post, :count).by(1)
+        expect { post_create }.to change(Post, :count).by(1)
       end
 
       it 'redirects to new post static page' do
-        subject
+        post_create
 
         expect(response).to redirect_to(post_url(params[:post][:title].parameterize))
+      end
+
+      it 'displays new post information after redirect' do
+        post_create
         follow_redirect!
 
-        expect(response.body).to include(
-          params[:post][:title],
-          params[:post][:video_url],
-          params[:post][:body]
-        )
+        expect(response.body).to include(params[:post][:title], params[:post][:video_url], params[:post][:body])
       end
 
       context 'when post deliver_newsletter is true' do
         let!(:mailing_list) { create(:mailing_list, :post_newsletter) }
 
-        let!(:subscriber1) { create(:subscriber) }
-        let!(:subscriber2) { create(:subscriber) }
-        let!(:non_subscriber) { create(:subscriber) }
+        let!(:first_subscriber) { create(:subscriber) }
+        let!(:second_subscriber) { create(:subscriber) }
+        let(:non_subscriber) { create(:subscriber) }
 
         before do
           params[:post][:deliver_newsletter] = true
-          subscriber1.mailing_lists << mailing_list
-          subscriber2.mailing_lists << mailing_list
+          first_subscriber.mailing_lists << mailing_list
+          second_subscriber.mailing_lists << mailing_list
         end
 
         it 'sends newsletter to all post_newsletter subscribers' do
           assert_emails 2 do
-            subject
+            post_create
             perform_enqueued_jobs
           end
         end
@@ -136,13 +136,13 @@ RSpec.describe 'Posts', type: :request do
 
     before { get "/posts/#{posts[0].static_page_name}/edit" }
 
-    context 'non-logged-in user', :create_and_clean_post_files do
+    context 'with non-logged-in user', :create_and_clean_post_files do
       it 'redirects to signin page' do
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated, :create_and_clean_post_files do
+    context 'with logged-in user', :authenticated, :create_and_clean_post_files do
       it 'returns http success' do
         expect(response).to have_http_status(:success)
       end
@@ -150,7 +150,7 @@ RSpec.describe 'Posts', type: :request do
   end
 
   describe 'update' do
-    subject { put "/posts/#{posts[0].static_page_name}", params: }
+    subject(:post_update) { put "/posts/#{posts[0].static_page_name}", params: }
 
     let!(:posts) { [create(:post)] }
     let(:params) do
@@ -163,71 +163,83 @@ RSpec.describe 'Posts', type: :request do
       }
     end
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
-        subject
+        post_update
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated, :create_and_clean_post_files do
+    context 'with logged-in user', :authenticated, :create_and_clean_post_files do
       after { StaticPageService.delete_static_page(params[:post][:title].parameterize) }
 
-      it 'updates static page file name' do
-        expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).to be true
-        subject
+      it 'deletes old static page file' do
+        post_update
         expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).not_to be true
+      end
+
+      it 'creates new static page file' do
+        post_update
         expect(StaticPageService.static_page_exist?(params[:post][:title].parameterize)).to be true
       end
 
       it 'redirects to updated post static page' do
-        subject
+        post_update
         expect(response).to redirect_to(post_url(params[:post][:title].parameterize))
-        follow_redirect!
-
-        expect(response.body).to include(
-          params[:post][:title],
-          params[:post][:video_url],
-          params[:post][:body]
-        )
       end
 
-      it 'updates post' do
-        subject
+      it 'displays new post information after redirect' do
+        post_update
+        follow_redirect!
+
+        expect(response.body).to include(params[:post][:title], params[:post][:video_url], params[:post][:body])
+      end
+
+      it 'updates post title' do
+        post_update
         posts[0].reload
         expect(posts[0].title).to eq(params[:post][:title])
+      end
+
+      it 'updates post video_url' do
+        post_update
+        posts[0].reload
         expect(posts[0].video_url).to eq(params[:post][:video_url])
+      end
+
+      it 'updates post body' do
+        post_update
+        posts[0].reload
         expect(posts[0].body.body.to_s).to include(params[:post][:body])
       end
     end
   end
 
   describe 'destroy' do
-    subject { delete "/posts/#{posts[0].static_page_name}" }
+    subject(:post_destroy) { delete "/posts/#{posts[0].static_page_name}" }
 
     let!(:posts) { [create(:post)] }
 
-    context 'non-logged-in user' do
+    context 'with non-logged-in user' do
       it 'redirects to signin page' do
-        subject
+        post_destroy
         expect(response).to redirect_to(new_user_session_url)
       end
     end
 
-    context 'logged-in user', :authenticated, :create_and_clean_post_files do
+    context 'with logged-in user', :authenticated, :create_and_clean_post_files do
       it 'deletes static page file name' do
-        expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).to be true
-        subject
+        post_destroy
         expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).not_to be true
       end
 
       it 'redirects index page' do
-        subject
+        post_destroy
         expect(response).to redirect_to(posts_url)
       end
 
       it 'deletes post' do
-        expect { subject }.to change(Post, :count).by(-1)
+        expect { post_destroy }.to change(Post, :count).by(-1)
       end
     end
   end

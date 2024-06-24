@@ -3,31 +3,45 @@
 require 'rails_helper'
 
 RSpec.describe Link, type: :model do
-  let!(:link1) { create(:link) }
-  let!(:link2) { create(:link) }
-  let!(:link3) { create(:link) }
+  it { should belong_to(:user) }
+  it { should have_one(:link_type) }
+
+  let!(:first_link) { create(:link) }
+  let!(:second_link) { create(:link) }
+  let!(:third_link) { create(:link) }
 
   describe 'reorder_links_after_create' do
     context 'when creating a new Link' do
-      it 'Link.order shoud become 1 and older Link orders are increased by 1' do
-        expect(link3.order).to eq(1)
-        link2.reload
-        expect(link2.order).to eq(2)
-        link1.reload
-        expect(link1.order).to eq(3)
+      it 'sets new link order to 1' do
+        expect(third_link.order).to eq(1)
+      end
+
+      it 'increases sencond_link order by 1' do
+        second_link.reload
+        expect(second_link.order).to eq(2)
+      end
+
+      it 'increases first_link order by 1' do
+        first_link.reload
+        expect(first_link.order).to eq(3)
       end
     end
   end
 
   describe 'reorder_links_after_destroy' do
     context 'when deleting a Link' do
-      it "Links that have order greater than deleted link's order should have their order decreased by 1" do
-        link3.destroy
+      it 'decreases second_link order by 1' do
+        third_link.destroy
 
-        link2.reload
-        expect(link2.order).to eq(1)
-        link1.reload
-        expect(link1.order).to eq(2)
+        second_link.reload
+        expect(second_link.order).to eq(1)
+      end
+
+      it 'decreases first_link order by 1' do
+        third_link.destroy
+
+        first_link.reload
+        expect(first_link.order).to eq(2)
       end
     end
   end
