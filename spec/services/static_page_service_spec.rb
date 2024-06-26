@@ -8,13 +8,15 @@ RSpec.describe StaticPageService, type: :service do
       let!(:posts) { [create(:post)] }
 
       it 'returns true' do
-        expect(described_class.static_page_exist?(posts[0].static_page_name)).to be true
+        expect(described_class.new(posts[0]).static_page_exist?).to be true
       end
     end
 
     context 'when static page with static_page_name does not exists' do
+      let!(:post) { create(:post) }
+
       it 'returns false' do
-        expect(described_class.static_page_exist?('i-dont-exist')).to be false
+        expect(described_class.new(post).static_page_exist?).to be false
       end
     end
   end
@@ -25,12 +27,12 @@ RSpec.describe StaticPageService, type: :service do
 
       around do |example|
         example.run
-        described_class.delete_static_page(post.static_page_name)
+        described_class.new(post).delete_static_page
       end
 
       it "creates a static page file based on the post's static_page_name" do
-        described_class.generate_static_page_from_post(post)
-        expect(described_class.static_page_exist?(post.static_page_name)).to be true
+        described_class.new(post).generate_static_page
+        expect(described_class.new(post).static_page_exist?).to be true
       end
     end
   end
@@ -39,13 +41,13 @@ RSpec.describe StaticPageService, type: :service do
     let!(:post) { create(:post) }
 
     before do
-      described_class.generate_static_page_from_post(post)
+      described_class.new(post).generate_static_page
     end
 
     context 'when static page file exists' do
       it 'deletes file' do
-        described_class.delete_static_page(post.static_page_name)
-        expect(described_class.static_page_exist?(post.static_page_name)).to be false
+        described_class.new(post).delete_static_page
+        expect(described_class.new(post).static_page_exist?).to be false
       end
     end
   end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Link < ApplicationRecord
+  belongs_to :link_type, optional: true
   belongs_to :user
-  has_one :link_type
 
   validates :display, inclusion: { in: [true, false] }
   validates :order, :user_id, presence: true
@@ -18,7 +18,8 @@ class Link < ApplicationRecord
   def reorder_links_before_create
     ActiveRecord::Base.transaction do
       Link.all.find_each do |link|
-        link.increment!(:order)
+        link.order += 1
+        link.save
       end
     end
   end
@@ -26,7 +27,8 @@ class Link < ApplicationRecord
   def reorder_links_before_destroy
     ActiveRecord::Base.transaction do
       Link.where(order: (order + 1)..).each do |link|
-        link.decrement!(:order)
+        link.order -= 1
+        link.save
       end
     end
   end

@@ -8,27 +8,25 @@ class PostsController < ApplicationController
   end
 
   def show
-    if StaticPageService.static_page_exist?(params[:static_page_name])
-      render "/posts/static_pages/#{params[:static_page_name]}"
+    view_path = "/posts/static_pages/#{params[:static_page_name]}"
+
+    if view_file_exist?(view_path)
+      render view_path
     else
       redirect_to posts_url
     end
   end
 
-  def new; end
+  def new
+    @post = Post.new
+  end
 
   def create
     post = current_user.posts.new(post_params)
 
     if post.save
-      StaticPageService.generate_static_page_from_post(post)
-
-      if post.deliver_newsletter
-        MailingList.post_newsletter_subscribers.find_each do |subscriber|
-          PostMailer.with(post:, subscriber:).new_post.deliver_later
-        end
-      end
-
+      StaticPageService.new(post).generate_static_page
+      deliver_post_newsletter(post)
       redirect_to post_url(post)
     else
       render :new
@@ -41,11 +39,11 @@ class PostsController < ApplicationController
 
   def update
     @post = Post.find_by(static_page_name: params[:static_page_name])
-    old_static_page_name = @post&.static_page_name
+    old_static_page = StaticPageService.new(@post)
 
     if @post&.update(post_params)
-      StaticPageService.delete_static_page(old_static_page_name)
-      StaticPageService.generate_static_page_from_post(@post)
+      old_static_page.delete_static_page
+      StaticPageService.new(@post).generate_static_page
       redirect_to post_url(@post)
     else
       render :edit
@@ -54,7 +52,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post = Post.find_by(static_page_name: params[:static_page_name])
-    StaticPageService.delete_static_page(@post.static_page_name)
+    StaticPageService.new(@post).delete_static_page
     @post.destroy
     redirect_to posts_url
   end
@@ -68,5 +66,17 @@ class PostsController < ApplicationController
       :video_url,
       :deliver_newsletter
     )
+  end
+
+  def deliver_post_newsletter(post)
+    return unless post.deliver_newsletter
+
+    MailingList.post_newsletter_subscribers.find_each do |subscriber|
+      PostMailer.with(post:, subscriber:).new_post.deliver_later
+    end
+  end
+
+  def view_file_exist?(view_path)
+    File.exist?(Rails.root.join("app/views#{view_path}.html.erb"))
   end
 end

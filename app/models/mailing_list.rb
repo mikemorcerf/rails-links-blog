@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class MailingList < ApplicationRecord
-  has_and_belongs_to_many :subscribers
+  has_many :mailing_lists_subscribers
+  has_many :subscribers, through: :mailing_lists_subscribers
 
   validates :name, uniqueness: true, presence: true
 

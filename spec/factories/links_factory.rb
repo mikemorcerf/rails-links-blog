@@ -6,6 +6,7 @@ FactoryBot.define do
     url { Faker::Internet.url }
     icon { Faker::Lorem.sentence }
     display { true }
+    link_type { nil }
 
     after(:build) do |link|
       link.user = User.first || create(:user)

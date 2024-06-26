@@ -3,17 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  it { should have_many(:links) }
-  it { should have_many(:posts) }
+  it { is_expected.to have_many(:links) }
+  it { is_expected.to have_many(:posts) }
 
   describe 'admin_email?' do
     let!(:user) { build(:user) }
 
     context 'when user email is the same as in env ADMIN_EMAIL' do
       it 'returns true' do
-        ClimateControl.modify ADMIN_EMAIL: user.email do
-          expect(user.save).to eq(true)
-        end
+        expect(user.save).to be(true)
       end
     end
 

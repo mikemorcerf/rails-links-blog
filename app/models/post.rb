@@ -2,12 +2,14 @@
 
 class Post < ApplicationRecord
   belongs_to :user
-  has_and_belongs_to_many :tags
+  has_many :posts_tags
+  has_many :tags, through: :posts_tags
   has_rich_text :body
-  
+
   validates :deliver_newsletter, inclusion: { in: [true, false] }
-  validates :title, :static_page_name, presence: true, uniqueness: true
-  validates :static_page_name, presence: true
+  validates :title, presence: true
+  validates :static_page_name, presence: true, uniqueness: true
+  validates :title, presence: true
 
   before_validation :create_static_page_name
 

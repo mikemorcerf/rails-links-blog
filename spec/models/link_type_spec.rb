@@ -3,5 +3,5 @@
 require 'rails_helper'
 
 RSpec.describe LinkType, type: :model do
-  it { should belong_to(:link) }
+  it { is_expected.to have_many(:links) }
 end

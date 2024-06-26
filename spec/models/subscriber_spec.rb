@@ -3,5 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe Subscriber, type: :model do
-  it { should have_and_belong_to_many(:mailing_lists) }
+  it { is_expected.to have_many(:mailing_lists_subscribers) }
+  it { is_expected.to have_many(:mailing_lists).through(:mailing_lists_subscribers) }
 end

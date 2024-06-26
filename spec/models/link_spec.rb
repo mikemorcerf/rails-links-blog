@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Link, type: :model do
-  it { should belong_to(:user) }
-  it { should have_one(:link_type) }
-
   let!(:first_link) { create(:link) }
   let!(:second_link) { create(:link) }
   let!(:third_link) { create(:link) }
+
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:link_type).optional }
 
   describe 'reorder_links_after_create' do
     context 'when creating a new Link' do

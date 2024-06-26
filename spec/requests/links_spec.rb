@@ -4,48 +4,17 @@ require 'rails_helper'
 
 RSpec.describe 'Links', type: :request do
   let!(:first_link) { create(:link) }
-  let!(:invisible_link) { create(:link, :invisible) }
-  let!(:third_link) { create(:link) }
 
+  # rubocop:disable RSpec/LetSetup
   describe 'index' do
+    let!(:invisible_link) { create(:link, :invisible) }
+    let!(:third_link) { create(:link) }
+
     before { get '/links' }
 
-    context 'with non-logged-in user' do
-      it 'returns http success' do
-        expect(response).to have_http_status(:success)
-      end
-
-      it 'does not display invisible_link' do
-        expect(response.body).not_to include(invisible_link.title)
-      end
-
-      it 'displays third_link before first_link' do
-        expect(response.body.index(third_link.title)).to be < response.body.index(first_link.title)
-      end
-
-      it 'does not show Link Delete buttons' do
-        expect(response.body).not_to include('Delete')
-      end
-    end
-
-    context 'with logged-in user', :authenticated do
-      it 'returns http success' do
-        expect(response).to have_http_status(:success)
-      end
-
-      it 'displays invisible_link before first_link' do
-        expect(response.body.index(invisible_link.title)).to be < response.body.index(first_link.title)
-      end
-
-      it 'displays third_link before invisible_link' do
-        expect(response.body.index(third_link.title)).to be < response.body.index(invisible_link.title)
-      end
-
-      it 'shows Link Delete buttons' do
-        expect(response.body).to include('Delete')
-      end
-    end
+    include_examples 'links_index'
   end
+  # rubocop:enable RSpec/LetSetup
 
   describe 'show' do
     before { get "/links/#{first_link.id}" }

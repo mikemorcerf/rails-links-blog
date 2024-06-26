@@ -3,30 +3,18 @@
 require 'rails_helper'
 
 RSpec.describe 'Posts', type: :request do
+  # rubocop:disable RSpec/LetSetup
   describe 'index' do
-    let!(:posts) { create_list(:post, 3) }
+    let!(:posts) { create_list(:post, 2) }
 
     before { get '/posts' }
 
-    context 'with non-logged-in user' do
-      it 'returns http success' do
-        expect(response).to have_http_status(:success)
-      end
-
-      include_examples 'displays all posts'
-    end
-
-    context 'with logged-in user', :authenticated do
-      it 'returns http success' do
-        expect(response).to have_http_status(:success)
-      end
-
-      include_examples 'displays all posts'
-    end
+    include_examples 'posts_index'
   end
+  # rubocop:enable RSpec/LetSetup
 
   describe 'show' do
-    let!(:posts) { create_list(:post, 3) }
+    let!(:posts) { create_list(:post, 2) }
 
     before { get "/posts/#{posts[1].static_page_name}" }
 
@@ -89,7 +77,7 @@ RSpec.describe 'Posts', type: :request do
     end
 
     context 'with logged-in user', :authenticated do
-      after { StaticPageService.delete_static_page(params[:post][:title].parameterize) }
+      after { delete_static_page_by_name(params[:post][:title].parameterize) }
 
       it 'creates new post' do
         expect { post_create }.to change(Post, :count).by(1)
@@ -107,25 +95,26 @@ RSpec.describe 'Posts', type: :request do
 
         expect(response.body).to include(params[:post][:title], params[:post][:video_url], params[:post][:body])
       end
+    end
 
-      context 'when post deliver_newsletter is true' do
-        let!(:mailing_list) { create(:mailing_list, :post_newsletter) }
+    context 'when post deliver_newsletter is true', :authenticated do
+      after { delete_static_page_by_name(params[:post][:title].parameterize) }
 
-        let!(:first_subscriber) { create(:subscriber) }
-        let!(:second_subscriber) { create(:subscriber) }
-        let(:non_subscriber) { create(:subscriber) }
+      let!(:mailing_list) { create(:mailing_list, :post_newsletter) }
+      let!(:first_subscriber) { create(:subscriber) }
+      let!(:second_subscriber) { create(:subscriber) }
+      let(:non_subscriber) { create(:subscriber) }
 
-        before do
-          params[:post][:deliver_newsletter] = true
-          first_subscriber.mailing_lists << mailing_list
-          second_subscriber.mailing_lists << mailing_list
-        end
+      before do
+        params[:post][:deliver_newsletter] = true
+        first_subscriber.mailing_lists << mailing_list
+        second_subscriber.mailing_lists << mailing_list
+      end
 
-        it 'sends newsletter to all post_newsletter subscribers' do
-          assert_emails 2 do
-            post_create
-            perform_enqueued_jobs
-          end
+      it 'sends newsletter to all post_newsletter subscribers' do
+        assert_emails 2 do
+          post_create
+          perform_enqueued_jobs
         end
       end
     end
@@ -171,16 +160,16 @@ RSpec.describe 'Posts', type: :request do
     end
 
     context 'with logged-in user', :authenticated, :create_and_clean_post_files do
-      after { StaticPageService.delete_static_page(params[:post][:title].parameterize) }
+      after { StaticPageService.new(posts[0].reload).delete_static_page }
 
       it 'deletes old static page file' do
         post_update
-        expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).not_to be true
+        expect(StaticPageService.new(posts[0]).static_page_exist?).not_to be true
       end
 
       it 'creates new static page file' do
         post_update
-        expect(StaticPageService.static_page_exist?(params[:post][:title].parameterize)).to be true
+        expect(StaticPageService.new(posts[0].reload).static_page_exist?).to be true
       end
 
       it 'redirects to updated post static page' do
@@ -230,7 +219,7 @@ RSpec.describe 'Posts', type: :request do
     context 'with logged-in user', :authenticated, :create_and_clean_post_files do
       it 'deletes static page file name' do
         post_destroy
-        expect(StaticPageService.static_page_exist?(posts[0].static_page_name)).not_to be true
+        expect(StaticPageService.new(posts[0]).static_page_exist?).not_to be true
       end
 
       it 'redirects index page' do

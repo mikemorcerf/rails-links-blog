@@ -17,6 +17,7 @@ class User < ApplicationRecord
 
   def admin_email?
     raise "Yu Ain't No Chosen One" if email != ENV.fetch('ADMIN_EMAIL')
+
     true
   end
 end

@@ -12,3 +12,8 @@ AllCops:
     - 'config/*/*.rb'
     - 'db/migrate/*.rb'
     - 'db/schema.rb'
+
+AllCops:
+  NewCops: enable
+Style/Documentation:
+  Enabled: false

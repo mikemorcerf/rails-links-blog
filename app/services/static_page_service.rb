@@ -1,33 +1,37 @@
 # frozen_string_literal: true
 
 class StaticPageService
-  def self.generate_static_page_from_post(post)
-    file_path = get_file_path(post.static_page_name)
+  def initialize(post)
+    @post = post
+    @static_page_name = post&.static_page_name
+    @file_path = file_path
+  end
 
-    File.open(file_path, 'w') do |file|
-      file.write(generate_page(post))
+  def generate_static_page
+    File.open(@file_path, 'w') do |file|
+      file.write(generate_page)
     end
   end
 
-  def self.delete_static_page(static_page_name)
-    file_path = get_file_path(static_page_name)
-    File.delete(file_path) if File.exist?(file_path)
+  def delete_static_page
+    File.delete(@file_path) if static_page_exist?
   end
 
-  def self.static_page_exist?(static_page_name)
-    File.exist?(get_file_path(static_page_name))
+  def static_page_exist?
+    File.exist?(@file_path)
   end
 
-  def self.get_file_path(static_page_name)
-    Rails.root.join("app/views/posts/static_pages/#{static_page_name}.html.erb")
+  private
+
+  def file_path
+    Rails.root.join("app/views/posts/static_pages/#{@static_page_name}.html.erb")
   end
 
-  def self.generate_page(post)
-    <<-HTML
-    <h1>#{post.title}</h1>
-    <p>#{post.body}</p>
-    <p>#{post.video_url}</p>
-    <p>#{post.user}</p>
-    HTML
+  def generate_page
+    ApplicationController.render(
+      template: 'posts/static_page',
+      layout: true,
+      locals: { post: @post }
+    )
   end
 end

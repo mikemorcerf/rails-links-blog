@@ -3,5 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe Tag, type: :model do
-  it { should have_and_belong_to_many(:posts) }
+  it { is_expected.to have_many(:posts_tags) }
+  it { is_expected.to have_many(:posts).through(:posts_tags) }
 end
