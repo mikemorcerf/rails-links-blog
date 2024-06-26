@@ -37,6 +37,12 @@ RSpec.describe 'Posts' do
         )
       end
     end
+
+    context 'when providing a static page name that does not exist' do
+      it 'redirects to posts#index' do
+        expect(response).to redirect_to(posts_url)
+      end
+    end
   end
 
   describe 'new' do
@@ -116,6 +122,24 @@ RSpec.describe 'Posts' do
           post_create
           perform_enqueued_jobs
         end
+      end
+    end
+
+    context 'when using invalid params', :authenticated do
+      let(:params) do
+        {
+          post: {
+            title: nil,
+            body: "<p>#{SecureRandom.alphanumeric(8)}</p>",
+            video_url: Faker::Internet.url,
+            deliver_newsletter: false
+          }
+        }
+      end
+
+      it 'renders new form' do
+        post_create
+        expect(response).to render_template(:new)
       end
     end
   end
@@ -200,6 +224,24 @@ RSpec.describe 'Posts' do
         post_update
         posts[0].reload
         expect(posts[0].body.body.to_s).to include(params[:post][:body])
+      end
+    end
+
+    context 'when using invalid params', :authenticated do
+      let(:params) do
+        {
+          post: {
+            title: nil,
+            body: "<p>#{SecureRandom.alphanumeric(8)}</p>",
+            video_url: Faker::Internet.url,
+            deliver_newsletter: false
+          }
+        }
+      end
+
+      it 'renders new form' do
+        post_update
+        expect(response).to render_template(:edit)
       end
     end
   end

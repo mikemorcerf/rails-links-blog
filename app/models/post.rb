@@ -7,7 +7,6 @@ class Post < ApplicationRecord
   has_rich_text :body
 
   validates :deliver_newsletter, inclusion: { in: [true, false] }
-  validates :title, presence: true
   validates :static_page_name, presence: true, uniqueness: true
   validates :title, presence: true
 
@@ -20,6 +19,6 @@ class Post < ApplicationRecord
   private
 
   def create_static_page_name
-    self.static_page_name = title&.parameterize
+    self.static_page_name = title.parameterize unless title.nil?
   end
 end

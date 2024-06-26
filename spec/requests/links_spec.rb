@@ -105,6 +105,21 @@ RSpec.describe 'Links' do
         expect(response.body).to include(params[:link][:title], params[:link][:url], params[:link][:icon])
       end
     end
+
+    context 'when using invalid params', :authenticated do
+      let(:params) do
+        {
+          link: {
+            display: nil
+          }
+        }
+      end
+
+      it 'renders new form' do
+        link_create
+        expect(response).to render_template(:new)
+      end
+    end
   end
 
   describe 'edit' do
@@ -166,6 +181,20 @@ RSpec.describe 'Links' do
       it 'updates link icon' do
         first_link.reload
         expect(first_link.icon).to eq(params[:link][:icon])
+      end
+    end
+
+    context 'when using invalid params', :authenticated do
+      let(:params) do
+        {
+          link: {
+            display: nil
+          }
+        }
+      end
+
+      it 'renders edit form' do
+        expect(response).to render_template(:edit)
       end
     end
   end

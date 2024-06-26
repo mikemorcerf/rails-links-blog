@@ -81,6 +81,9 @@ group :test do
   gem 'dotenv'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 6.1.0'
   gem 'shoulda-matchers'
+  gem 'simplecov', require: false
+  gem 'simplecov-console', require: false
 end
