@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe LinkType, type: :model do
+RSpec.describe LinkType do
   it { is_expected.to have_many(:links) }
 end

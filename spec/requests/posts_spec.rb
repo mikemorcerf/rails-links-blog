@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Posts', type: :request do
+RSpec.describe 'Posts' do
   # rubocop:disable RSpec/LetSetup
   describe 'index' do
     let!(:posts) { create_list(:post, 2) }

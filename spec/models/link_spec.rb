@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Link, type: :model do
+RSpec.describe Link do
   let!(:first_link) { create(:link) }
   let!(:second_link) { create(:link) }
   let!(:third_link) { create(:link) }

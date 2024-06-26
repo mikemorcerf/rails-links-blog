@@ -7,13 +7,12 @@ require:
 
 AllCops:
   TargetRubyVersion: 3.3 # or the latest supported version
+  NewCops: enable
   Exclude:
     - 'bin/*'
     - 'config/*/*.rb'
     - 'db/migrate/*.rb'
     - 'db/schema.rb'
-
-AllCops:
-  NewCops: enable
+  
 Style/Documentation:
   Enabled: false

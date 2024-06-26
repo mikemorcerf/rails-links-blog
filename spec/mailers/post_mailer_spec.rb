@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe PostMailer, type: :mailer do
+RSpec.describe PostMailer do
   describe 'new_post' do
     context 'when given a post and subscriber' do
       let!(:post) { create(:post) }
@@ -21,7 +21,7 @@ RSpec.describe PostMailer, type: :mailer do
       end
 
       it 'sends to subscriber' do
-        assert_equal [subscriber.email], email.to
+        expect(email.to).to eq([subscriber.email])
       end
 
       it 'generates html template with email title' do

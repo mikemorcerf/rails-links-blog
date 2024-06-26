@@ -1,3 +1,4 @@
+Add test coverage
 add form to sign up for newsletter
 Add Sidekiq
 Move logic in Post#Create to have a job that iterate through emails and send them

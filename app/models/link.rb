@@ -5,7 +5,7 @@ class Link < ApplicationRecord
   belongs_to :user
 
   validates :display, inclusion: { in: [true, false] }
-  validates :order, :user_id, presence: true
+  validates :order, presence: true
 
   default_scope { order(order: :asc) }
   scope :visible, -> { where(display: true) }
@@ -17,7 +17,7 @@ class Link < ApplicationRecord
 
   def reorder_links_before_create
     ActiveRecord::Base.transaction do
-      Link.all.find_each do |link|
+      Link.find_each do |link|
         link.order += 1
         link.save
       end

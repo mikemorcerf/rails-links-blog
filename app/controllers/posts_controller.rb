@@ -21,6 +21,10 @@ class PostsController < ApplicationController
     @post = Post.new
   end
 
+  def edit
+    @post = Post.find_by(static_page_name: params[:static_page_name])
+  end
+
   def create
     post = current_user.posts.new(post_params)
 
@@ -31,10 +35,6 @@ class PostsController < ApplicationController
     else
       render :new
     end
-  end
-
-  def edit
-    @post = Post.find_by(static_page_name: params[:static_page_name])
   end
 
   def update
@@ -77,6 +77,6 @@ class PostsController < ApplicationController
   end
 
   def view_file_exist?(view_path)
-    File.exist?(Rails.root.join("app/views#{view_path}.html.erb"))
+    Rails.root.join("app/views#{view_path}.html.erb").exist?
   end
 end

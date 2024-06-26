@@ -8,9 +8,7 @@ class StaticPageService
   end
 
   def generate_static_page
-    File.open(@file_path, 'w') do |file|
-      file.write(generate_page)
-    end
+    File.write(@file_path, generate_page)
   end
 
   def delete_static_page

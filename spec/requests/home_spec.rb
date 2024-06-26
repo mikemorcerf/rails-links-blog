@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Home', type: :request do
+RSpec.describe 'Home' do
   subject(:home_index) { get '/' }
 
   describe 'index' do

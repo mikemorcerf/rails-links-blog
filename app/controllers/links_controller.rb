@@ -15,6 +15,10 @@ class LinksController < ApplicationController
     @link = Link.new
   end
 
+  def edit
+    @link = Link.find(params[:id])
+  end
+
   def create
     @link = current_user.links.new(link_params)
 
@@ -23,10 +27,6 @@ class LinksController < ApplicationController
     else
       render :new
     end
-  end
-
-  def edit
-    @link = Link.find(params[:id])
   end
 
   def update

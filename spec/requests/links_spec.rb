@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Links', type: :request do
+RSpec.describe 'Links' do
   let!(:first_link) { create(:link) }
 
   # rubocop:disable RSpec/LetSetup
