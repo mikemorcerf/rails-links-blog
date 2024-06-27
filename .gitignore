@@ -36,6 +36,9 @@
 # Ignore spec coverage files
 /coverage
 
+# Ignore posts static pages because they're generated at deploy based on Posts in db
+/app/views/posts/static_pages/*
+
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 

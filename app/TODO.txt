@@ -1,14 +1,15 @@
-add form to sign up for newsletter
 Add Sidekiq
 Move logic in Post#Create to have a job that iterate through emails and send them
 Containerize!!!!!!!!!
-Deploying the app should generate all static pages based on Posts that are saved in db
 Check out dip gem - https://github.com/bibendi/dip
+Subscribers must be able to signout from newsletter
+Subscriber must receive and click confirmation email before receiving posts (create field confirmed for subscriber)
+Deploying the app should generate all static pages based on Posts that are saved in db [Script to generate pages?]
+Validation to email format for email subscribers
 Images for Links and User profile (polimorphic)
 Add tags to Posts
 Add pagination to Posts
 Does Post body get deleted at Post.destroy ?
 Add comments to Posts (polimorphic?)
-Validation to email format for email subscribers
 Explore Site Map for SEO - https://github.com/kjvarga/sitemap_generator
 Add analytics (Google analytics?)

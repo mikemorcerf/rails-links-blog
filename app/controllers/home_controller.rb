@@ -5,5 +5,6 @@ class HomeController < ApplicationController
     @links = user_signed_in? ? Link.all : Link.visible
     # TODO: add pagination and truncate
     @posts = Post.all
+    @subscriber = Subscriber.new
   end
 end

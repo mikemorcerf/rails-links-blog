@@ -2,4 +2,5 @@
   <h1 class="font-bold text-4xl">Home#index</h1>
   <%= render partial: 'links/link', collection: @links %>
   <%= render partial: 'posts/post', collection: @posts %>
+  <%= render partial: 'subscribers/form', locals: { subscriber: @subscriber } %>
 </div>

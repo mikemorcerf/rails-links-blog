@@ -20,6 +20,7 @@ require 'action_cable/engine'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# rubocop:disable Style/FetchEnvVar
 module RailsLinksBlog
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -39,8 +40,8 @@ module RailsLinksBlog
     # Make Active Record auto-convert to this zone
     config.active_record.default_timezone = :local
 
-    config.action_mailer.default_url_options = { host: ENV.fetch('APP_URL') }
-    config.action_mailer.asset_host = ENV.fetch('ASSET_HOST_URL')
+    config.action_mailer.default_url_options = { host: ENV['APP_URL'] }
+    config.action_mailer.asset_host = ENV['ASSET_HOST_URL']
 
     # config.eager_load_paths << Rails.root.join('extras')
 
@@ -62,3 +63,4 @@ module RailsLinksBlog
     end
   end
 end
+# rubocop:enable Style/FetchEnvVar

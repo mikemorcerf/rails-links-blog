@@ -27,5 +27,13 @@ RSpec.describe 'Home' do
       include_examples 'posts_index'
     end
     # rubocop:enable RSpec/LetSetup
+
+    context 'when showing Subscription form' do
+      before { home_index }
+
+      it 'shows newsletter subscription form' do
+        expect(response).to render_template(partial: 'subscribers/_form')
+      end
+    end
   end
 end
